@@ -58,6 +58,7 @@ def identify_new_post():
 async def control_node(wait_for):
     while True:
         await asyncio.sleep(wait_for)
+        print('Checking')
         new_post = identify_new_post()
         if new_post:
             print('New record found: ', new_post)
