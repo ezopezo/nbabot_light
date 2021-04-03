@@ -7,17 +7,15 @@ from datetime import datetime, timezone
 posts = [('text', 'created_at', 'timestamp')]
 
 def set_api():
-    KEYS = open('keys.txt', 'r').readlines()
-    auth = tweepy.OAuthHandler(KEYS[4].strip('\n'), KEYS[5].strip('\n')) #(os.environ['CONSUMER_KEY'], os.environ['CONSUMER_SECRET'])
-    auth.set_access_token(KEYS[6].strip('\n'), KEYS[7].strip('\n')) #(os.environ['ACCESS_KEY'], os.environ['ACCESS_SECRET'])
+    auth = tweepy.OAuthHandler(os.environ['CONSUMER_KEY'], os.environ['CONSUMER_SECRET'])
+    auth.set_access_token(os.environ['ACCESS_KEY'], os.environ['ACCESS_SECRET'])
     api = tweepy.API(auth)
     return api
 
 
 def set_bot():
-    KEYS = open('keys.txt', 'r').readlines()
-    bot_token = KEYS[2].strip('\n') #os.environ['BOT_TOKEN']
-    chat_id = KEYS[3].strip('\n') #os.environ['CHAT_ID']
+    bot_token = os.environ['BOT_TOKEN']
+    chat_id = os.environ['CHAT_ID']
     bot = telebot.TeleBot(bot_token, parse_mode=None)
     return bot, chat_id
 
