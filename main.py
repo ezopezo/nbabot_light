@@ -7,15 +7,15 @@ from datetime import datetime, timezone
 posts = [('text', 'created_at', 'timestamp')]
 
 def set_api():
-    auth = tweepy.OAuthHandler(os.environ['CONSUMER_KEY'], os.environ['CONSUMER_SECRET'])
-    auth.set_access_token(os.environ['ACCESS_KEY'], os.environ['ACCESS_SECRET'])
+    auth = tweepy.OAuthHandler(os.environ['CONSUMER_KEY'], os.environ['CONSUMER_SECRET']) #(KEYS[4].strip('\n'), KEYS[5].strip('\n')) #
+    auth.set_access_token(os.environ['ACCESS_KEY'], os.environ['ACCESS_SECRET']) #(KEYS[6].strip('\n'), KEYS[7].strip('\n')) #
     api = tweepy.API(auth)
     return api
 
 
 def set_bot():
-    bot_token = os.environ['BOT_TOKEN']
-    chat_id = os.environ['CHAT_ID']
+    bot_token = os.environ['BOT_TOKEN'] # KEYS[2].strip('\n')
+    chat_id = os.environ['CHAT_ID'] #KEYS[3].strip('\n')
     bot = telebot.TeleBot(bot_token, parse_mode=None)
     return bot, chat_id
 
@@ -58,7 +58,7 @@ async def control_node(wait_for):
         await asyncio.sleep(wait_for)
         new_post = identify_new_post()
         if new_post:
-            print('New record found.')
+            print('New record found: ', new_post)
             send_data_to_telegram(new_post)
         else:
             pass
