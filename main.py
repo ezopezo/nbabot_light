@@ -3,19 +3,20 @@ import os
 import telebot 
 import asyncio
 from datetime import datetime, timezone
+import pytz
 
 posts = [('text', 'created_at', 'timestamp')]
 
 def set_api():
-    auth = tweepy.OAuthHandler(os.environ['CONSUMER_KEY'], os.environ['CONSUMER_SECRET']) #(KEYS[4].strip('\n'), KEYS[5].strip('\n')) #
-    auth.set_access_token(os.environ['ACCESS_KEY'], os.environ['ACCESS_SECRET']) #(KEYS[6].strip('\n'), KEYS[7].strip('\n')) #
+    auth = tweepy.OAuthHandler(os.environ['CONSUMER_KEY'], os.environ['CONSUMER_SECRET'])
+    auth.set_access_token(os.environ['ACCESS_KEY'], os.environ['ACCESS_SECRET'])
     api = tweepy.API(auth)
     return api
 
 
 def set_bot():
-    bot_token = os.environ['BOT_TOKEN'] # KEYS[2].strip('\n')
-    chat_id = os.environ['CHAT_ID'] #KEYS[3].strip('\n')
+    bot_token = os.environ['BOT_TOKEN']
+    chat_id = os.environ['CHAT_ID']
     bot = telebot.TeleBot(bot_token, parse_mode=None)
     return bot, chat_id
 
@@ -41,11 +42,12 @@ def send_data_to_telegram(new_post):
 
 def identify_new_post():
     last_post = posts[-1]
+    tz = pytz.timezone('Europe/Paris') # <- put your local timezone here
     for post in obtain_data():
         if post.text != last_post[0]:
             posts.append((str(post.text), 
-                            post.created_at.replace(tzinfo=timezone.utc).astimezone(tz=None).strftime("%Y-%m-%d %H:%M:%S"),
-                            datetime.now().strftime("%Y-%m-%d %H:%M:%S")))
+                            post.created_at.replace(tzinfo=timezone.utc).astimezone(tz).strftime("%Y-%m-%d %H:%M:%S"),
+                            datetime.now(tz).strftime("%Y-%m-%d %H:%M:%S")))
             if len(posts) > 10:
                 del posts[0] 
             return posts[-1]
