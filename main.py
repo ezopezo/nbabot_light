@@ -44,7 +44,7 @@ def identify_new_post(posts_queue):
     for post in obtain_data():
         created_at_fixed_timezone = post.created_at.replace(tzinfo=timezone.utc).astimezone(tz)
         actual_time = datetime.now(tz)
-        text_queue = {post for post in posts_queue}
+        text_queue = {p[0] for p in posts_queue}
         if post.text != last_post[0] and \
             created_at_fixed_timezone.date() == actual_time.date() and \
             not '@' in post.text[0] and \
