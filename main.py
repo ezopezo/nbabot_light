@@ -5,6 +5,7 @@ import asyncio
 from datetime import datetime, timezone, date
 import pytz
 
+
 def set_api():
     auth = tweepy.OAuthHandler(os.environ['CONSUMER_KEY'], os.environ['CONSUMER_SECRET'])
     auth.set_access_token(os.environ['ACCESS_KEY'], os.environ['ACCESS_SECRET'])
@@ -71,7 +72,7 @@ async def control_node(wait_for, posts_queue, created_at_queue):
 def main():
     while True:
         try:
-            created_at_queue = []
+            created_at_queue = list()
             posts_queue = [('text', 'created_at', 'timestamp')]
             asyncio.run(control_node(2, posts_queue, created_at_queue))
         except Exception as e:
