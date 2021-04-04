@@ -6,17 +6,15 @@ from datetime import datetime, timezone, date
 import pytz
 
 def set_api():
-    KEYS = list(open('keys.txt', 'r'))
-    auth = tweepy.OAuthHandler(KEYS[4].strip('\n'), KEYS[5].strip('\n')) # (os.environ['CONSUMER_KEY'], os.environ['CONSUMER_SECRET'])
-    auth.set_access_token(KEYS[6].strip('\n'), KEYS[7].strip('\n')) # (os.environ['ACCESS_KEY'], os.environ['ACCESS_SECRET'])
+    auth = tweepy.OAuthHandler(os.environ['CONSUMER_KEY'], os.environ['CONSUMER_SECRET'])
+    auth.set_access_token(os.environ['ACCESS_KEY'], os.environ['ACCESS_SECRET'])
     api = tweepy.API(auth)
     return api
 
 
 def set_bot():
-    KEYS = list(open('keys.txt', 'r'))
-    bot_token = KEYS[2].strip('\n') #os.environ['BOT_TOKEN']
-    chat_id = KEYS[3].strip('\n') # os.environ['CHAT_ID']
+    bot_token = os.environ['BOT_TOKEN']
+    chat_id = os.environ['CHAT_ID']
     bot = telebot.TeleBot(bot_token, parse_mode=None)
     return bot, chat_id
 
@@ -46,12 +44,12 @@ def identify_new_post(posts_queue, created_at_queue):
         process_time = datetime.now(tz)
         if creation_time.date() == process_time.date() and \
             not '@' in post.text[0] and \
-            creation_time not in created_at_queue:
+            creation_time not in created_at_queue: # avoiding duplicities
             posts_queue.append((str(post.text), 
                             creation_time.strftime("%Y-%m-%d %H:%M:%S"),
                             process_time.strftime("%Y-%m-%d %H:%M:%S")))
             created_at_queue.append(creation_time)
-            if len(posts_queue) > 10:
+            if len(posts_queue) > 20:
                 del posts_queue[0] 
                 del created_at_queue[0]
             return posts_queue[-1]
