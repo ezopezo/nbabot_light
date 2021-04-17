@@ -2,7 +2,7 @@ import tweepy
 import os
 import telebot 
 import asyncio
-from datetime import datetime, timezone, date
+from datetime import datetime, timezone, date, timedelta
 import pytz
 
 
@@ -46,9 +46,9 @@ def set_timestamps(post):
     '''Adjusting correct timezone in created_at post attribute,
     setting timestamp of post processing'''
     tz = pytz.timezone('Europe/Paris')
-    creation_time = post.created_at.replace(tzinfo=timezone.utc).astimezone(tz)
     process_time = datetime.now(tz)
-    return creation_time, process_time
+    creation_time = post.created_at.replace(tzinfo=timezone.utc).astimezone(tz).strftime("%Y-%m-%d %H:%M:%S")
+    return datetime.strptime(creation_time, "%Y-%m-%d %H:%M:%S"), process_time
 
 
 def control_queues(posts_queue, created_at_queue, max_items_in_queue=20):
@@ -69,7 +69,8 @@ def identify_new_post(posts_queue, created_at_queue):
         creation_time, process_time = set_timestamps(post)
         if creation_time.date() == process_time.date() and \
             not '@' in post.text[0] and \
-            creation_time not in created_at_queue:
+            creation_time not in created_at_queue and \
+            creation_time > datetime.now()-timedelta(seconds=7): # and if older than few seconds (to avoid repeating last tweet)
 
             posts_queue.append((str(post.text), 
                             creation_time.strftime("%Y-%m-%d %H:%M:%S"),
@@ -100,11 +101,11 @@ def main():
             asyncio.run(control_node(wait_for=1.2, posts_queue=posts_queue, created_at_queue=created_at_queue))
         except Exception as exc:
             print('Bot restarted: ', exc)
-            bot, chat_id = set_bot()
-            bot.send_message(chat_id, 'Bot succesfully restarted... Last tweet may reappear.')
+            #bot, chat_id = set_bot()
+            print('Bot succesfully restarted... Last tweet may reappear.')
+            #bot.send_message(chat_id, 'Bot succesfully restarted... Last tweet may reappear.')
             continue
 
 
 if __name__ == '__main__':
     main()
-    
