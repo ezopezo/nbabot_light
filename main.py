@@ -38,7 +38,7 @@ class GetTweets:
         if self.twitter_api is None:
             print('Setting twitter API connection...')
             self.twitter_api = self.set_twitter_api
-        post_collection = self.twitter_api.user_timeline("FantasyLabsNBA", count=1, tweet_mode='extended')
+        post_collection = self.twitter_api.user_timeline(os.environ.get("TIMELINE"), count=1, tweet_mode='extended')
         yield from post_collection
 
 
