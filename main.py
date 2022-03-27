@@ -18,8 +18,7 @@ class GetTweets:
     @property
     def set_twitter_api(self):
         '''Setting twitter API'''
-        auth = tweepy.OAuthHandler(os.environ['CONSUMER_KEY'], os.environ['CONSUMER_SECRET'])
-        auth.set_access_token(os.environ['ACCESS_KEY'], os.environ['ACCESS_SECRET'])
+        auth = tweepy.Client(os.environ['BEARER'])
         twitter_api = tweepy.API(auth)
         return twitter_api
 
